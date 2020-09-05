@@ -40,6 +40,28 @@ class ModuleHelper(object):
             exit(1)
 
     @staticmethod
+    def BNLeakyReLU(num_features, norm_type=None, **kwargs):
+        if norm_type == 'batchnorm':
+            return nn.Sequential(
+                nn.BatchNorm2d(num_features, **kwargs),
+                nn.LeakyReLU()
+            )
+        elif norm_type == 'encsync_batchnorm':
+            from encoding.nn import SyncBatchNorm
+            return nn.Sequential(
+                SyncBatchNorm(num_features, **kwargs),
+                nn.LeakyReLU()
+            )
+        elif norm_type == 'instancenorm':
+            return nn.Sequential(
+                nn.InstanceNorm2d(num_features, **kwargs),
+                nn.LeakyReLU()
+            )
+        else:
+            Log.error('Not support BN type: {}.'.format(norm_type))
+            exit(1)
+            
+    @staticmethod
     def BatchNorm3d(norm_type=None, ret_cls=False):
         if norm_type == 'batchnorm':
             return nn.BatchNorm3d
